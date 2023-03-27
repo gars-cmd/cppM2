@@ -4,31 +4,36 @@
 #include "card.hpp"
 #include <string>
 #include <vector>
+namespace ariel {
+
+
 
 class Player {
 private:
     std::string name;
-    std::vector<Card> cardStack;
-    std::vector<Card> wonStack;
+    std::vector<ariel::Card> cardStack;
+    std::vector<ariel::Card> wonStack;
     unsigned int nbrTotalCardsWon = 0;
     unsigned int nbrDrawWon = 0;
 
 public:
     Player(std::string name);
     std::string getName();
-    std::vector<Card> getCardStack();
-    void setCardStack(std::vector<Card> newCardStack);
+    std::vector<ariel::Card> getCardStack();
+    void setCardStack(std::vector<ariel::Card> newCardStack);
     unsigned int stacksize();
     unsigned int cardesTaken();
     void setNbrCardsWon();
-    void addToWonStack(std::vector<Card> newcards); 
+    void addToWonStack(std::vector<ariel::Card> newcards); 
     void EmptyWonStack();
-    Card pickCard();
-    void pushCard(std::vector<Card> cardsPushed);
-    Card putCard(Card card);
+    ariel::Card pickCard();
+    void pushCard(std::vector<ariel::Card> cardsPushed);
+    ariel::Card putCard(ariel::Card card);
 };
 
-#endif
 
+}
+
+#endif
 //Ressources 
 //https://www.geeksforgeeks.org/stack-in-cpp-stl/

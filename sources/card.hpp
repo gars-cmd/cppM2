@@ -1,5 +1,8 @@
 #ifndef CARD_HPP
 #define CARD_HPP
+
+namespace ariel {
+
 class Card {
 public:
     enum Value {
@@ -36,4 +39,6 @@ public:
     void printCard();
 };
 
+
+}
 #endif // CARD_HPP

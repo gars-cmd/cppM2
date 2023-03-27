@@ -1,20 +1,20 @@
 #include <iostream>
 #include "card.hpp"
 
-Card::Card(Value val, Symbol sym){
-        value = val;
-        symbol = sym;
+ariel::Card::Card(Value val, Symbol sym){
+        this->value = val;
+        this->symbol = sym;
     }
 
-Card::Value Card::getValue(){
+ariel::Card::Value ariel::Card::getValue(){
         return value;
     }
 
-Card::Symbol Card::getSymbol(){
+ariel::Card::Symbol ariel::Card::getSymbol(){
         return symbol;
     }
 
-    void Card::printCard(){
+    void ariel::Card::printCard(){
         switch (value) {
             case ACE:
                 std::cout << "Ace";
@@ -37,7 +37,7 @@ Card::Symbol Card::getSymbol(){
                 break;
         }
 
-        std::cout << "of";
+        std::cout << " of ";
 
         switch (symbol) {
             case HEART:
@@ -57,3 +57,10 @@ Card::Symbol Card::getSymbol(){
                 break;
         }
     }
+
+// int main (int argc, char *argv[])
+// {
+//     ariel::Card ace(ariel::Card::ACE, ariel::Card::HEART); 
+//     ace.printCard();
+//     return 0;
+// }

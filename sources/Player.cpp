@@ -1,61 +1,74 @@
 #include "player.hpp"
 #include "card.hpp"
+#include <cstddef>
+#include <iostream>
+#include <ostream>
 #include <vector>
 
-Player::Player(std::string name){
+ariel::Player::Player(std::string name){
     this->name = name;
 }
 
-std::string Player::getName(){
+std::string ariel::Player::getName(){
     return  this->name;
 }
 
-unsigned int Player::stacksize(){
-    return (unsigned int) this->cardStack.size();
+unsigned int ariel::Player::stacksize(){
+    // return (unsigned int) this->cardStack.size();
+     return 1;
 }
 
-void Player::setCardStack(std::vector<Card> newCardStack){
-    this->cardStack = newCardStack;
+void ariel::Player::setCardStack(std::vector<ariel::Card> newCardStack){
+    // this->cardStack = newCardStack;
+    std::cout << "call from Player::setCardStack";
 }
 
-std::vector<Card> Player::getCardStack(){
-    return this->cardStack;
+std::vector<ariel::Card> ariel::Player::getCardStack(){
+    // return this->cardStack;
+    return std::vector<ariel::Card>();
 }
 
-unsigned int Player::cardesTaken(){
-    return this->nbrTotalCardsWon;
+unsigned int ariel::Player::cardesTaken(){
+    // return this->nbrTotalCardsWon;
+    return 1;
 }
 
 //show the back card from the cardStack
-Card Player::pickCard(){
-    return this->cardStack.back();
+ariel::Card ariel::Player::pickCard(){
+    // return this->cardStack.back();
+    return ariel::Card(ariel::Card::ACE, ariel::Card::HEART);
 }
 
-void Player::addToWonStack(std::vector<Card> newcards){
-    this->wonStack.insert(
-            this->wonStack.end(),
-            newcards.begin(),
-            newcards.end()
-        );
+void ariel::Player::addToWonStack(std::vector<ariel::Card> newcards){
+    // this->wonStack.insert(
+    //         this->wonStack.end(),
+    //         newcards.begin(),
+    //         newcards.end()
+    //     );
+    std::cout << "call from Player::addToWonStack" << std::endl;
 }
 
-void Player::EmptyWonStack(){
-    this->wonStack.clear();
+void ariel::Player::EmptyWonStack(){
+    // this->wonStack.clear();
+    std::cout << "call from Player::EmptyWonStack" << std::endl;
 }
 
 // add card to the stack from the front
-void Player::pushCard(std::vector<Card> cardsPushed){
-   this->cardStack.insert(
-            this->cardStack.end(),
-            cardsPushed.begin(),
-            cardsPushed.end()
-        ); 
+void ariel::Player::pushCard(std::vector<ariel::Card> cardsPushed){
+   // this->cardStack.insert(
+   //          this->cardStack.end(),
+   //          cardsPushed.begin(),
+   //          cardsPushed.end()
+   //      ); 
+
+    std::cout << "call from Player::pushCard" << std::endl;
 }
 
-Card Player::putCard(Card card){
-    Card playedCard = this->cardStack.back();
-    this->cardStack.pop_back();
-    return playedCard;
+ariel::Card ariel::Player::putCard(Card card){
+    // ariel::Card playedCard = this->cardStack.back();
+    // this->cardStack.pop_back();
+    // return playedCard;
+    return ariel::Card(ariel::Card::ACE, ariel::Card::HEART);
 }
 
 
