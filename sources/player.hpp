@@ -23,6 +23,8 @@ public:
     void setCardStack(std::vector<ariel::Card> newCardStack);
     unsigned int stacksize();
     unsigned int cardesTaken();
+    std::vector<Card> getWonStack();
+    unsigned int getWonStackSize();
     void setNbrCardsWon();
     void addToWonStack(std::vector<ariel::Card> newcards); 
     void EmptyWonStack();

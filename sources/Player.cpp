@@ -18,6 +18,14 @@ unsigned int ariel::Player::stacksize(){
      return 1;
 }
 
+std::vector<ariel::Card> ariel::Player::getWonStack(){
+    return this->wonStack;
+}
+
+unsigned int ariel::Player::getWonStackSize(){
+    return this->wonStack.size();
+}
+
 void ariel::Player::setCardStack(std::vector<ariel::Card> newCardStack){
     // this->cardStack = newCardStack;
     std::cout << "call from Player::setCardStack";
