@@ -18,14 +18,16 @@ public:
         TEN,
         JACK,
         QUEEN,
-        KING
+        KING,
+        JOKER
     };
 
     enum Symbol {
         HEART,
         DIAMOND,
         SPADE,
-        CLUB
+        CLUB,
+        DEFAULT
     };
 
 private:
@@ -33,7 +35,8 @@ private:
     Symbol symbol;
 
 public:
-    Card(Value val, Symbol sym);
+    Card( Value val, Symbol sym);
+    Card();
     Value getValue();
     Symbol getSymbol();
     void printCard();

@@ -3,6 +3,7 @@
 
 #include "player.hpp"
 #include "card.hpp"
+#include <cstdint>
 #include <string>
 #include <vector>
 namespace ariel {
@@ -16,10 +17,18 @@ class Game {
         unsigned int nbrTotalDraw = 0;
 
     public:
+    enum Result {
+        P1_WIN,
+        P2_WIN,
+        DRAW
+    };
         Game(Player player1, Player player2);
         void playTurn();
         void playAll();
         void printLastTurn();
+        std::vector<std::string> getLogVector();
+        unsigned int getNbrTotalDraw();
+        Result compare(Card p1_card, Card p2_card);
         void printLog();
         void printWiner();
         void printStats();
