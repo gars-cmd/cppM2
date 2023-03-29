@@ -4,8 +4,12 @@
 #include <iostream>
 #include <ostream>
 #include <vector>
+#include <stdexcept>
 
 ariel::Player::Player(std::string name){
+    if (name.size() < 1) {
+        throw std::invalid_argument("the string is empty");
+    }
     this->name = name;
 }
 
@@ -80,7 +84,9 @@ ariel::Card ariel::Player::putCard(Card card){
 }
 
 
-    
+//Ressource:
+//https://stackoverflow.com/questions/810839/throwing-exceptions-from-constructors
+
 
 
 

@@ -84,6 +84,8 @@ std::vector<ariel::Card> ariel::Game::generateCardStack(){
 
 
 
-// SOURCES : 
+// Ressource : 
 // https://stackoverflow.com/questions/6926433/how-to-shuffle-a-stdvector
+// https://stackoverflow.com/questions/25248370/creating-a-vector-of-custom-type-objects
+//
 

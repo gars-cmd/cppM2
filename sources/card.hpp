@@ -1,6 +1,7 @@
 #ifndef CARD_HPP
 #define CARD_HPP
 
+#include <string>
 namespace ariel {
 
 class Card {
@@ -39,7 +40,7 @@ public:
     Card();
     Value getValue();
     Symbol getSymbol();
-    void printCard();
+    std::string toString();
 };
 
 

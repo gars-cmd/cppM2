@@ -29,14 +29,8 @@ TEST_CASE("same name for both of the player in the game -> NULL") {
     CHECK_THROWS(Game(p1,p2));
 }
 
-TEST_CASE("basic creation case of card"){
-    Card card1(Card::Value::ACE, Card::Symbol::HEART);
-    Card card2(Card::Value::FIVE, Card::Symbol::DIAMOND);
-    CHECK(card1.getValue() == Card::Value::ACE);
-    CHECK(card1.getSymbol() == Card::Symbol::HEART);
-    CHECK(card2.getValue() == Card::Value::FIVE);
-    CHECK(card2.getSymbol() == Card::Symbol::DIAMOND);
-}
+
+
 
 
 // 2.
@@ -50,8 +44,7 @@ TEST_CASE("the stackCard is less or more than 52 cards"){
 // 3.
 TEST_CASE("test that the game can be initialized with 2 player only"){
     Player p1("player1");
-    Game g1(p1,p1);
-    CHECK(g1.generateCardStack().size() == 0);
+    CHECK_THROWS(Game(p1,p1));
 }
 
 
@@ -119,7 +112,7 @@ TEST_CASE("test that a player play a card at a turn"){
     Player p2("player2");
     Game g1(p1,p2);
     unsigned int initSize = p1.stacksize();
-    p1.putCard(p1.getCardStack()[0]);
+    p1.putCard(p1.getCardStack().at(1));
     CHECK(p1.stacksize() == initSize - 1);
 }
 
@@ -129,7 +122,7 @@ TEST_CASE("test that a player play a card at a turn"){
     Player p1("player1");
     Player p2("player2");
     Game g1(p1,p2);
-    Card compareCard = p1.putCard(p1.getCardStack()[0]);
+    Card compareCard = p1.putCard(p1.getCardStack().at(1));
     bool c1 = compareCard.getValue() <= Card::KING;
     bool c2 = compareCard.getValue() >= Card::ACE;
     bool c3 = compareCard.getSymbol() >= Card::HEART;
@@ -188,15 +181,50 @@ TEST_CASE("test that there is same number of log that number of turn"){
 }
 
 
-// 13.
-TEST_CASE("test that there is same number of log that number of turn"){
+// 14.
+TEST_CASE("test the printing of the cards"){
+    Card aceOfHeart(Card::ACE, Card::HEART);
+    Card treeOfSpade(Card::THREE, Card::SPADE);
+    CHECK(aceOfHeart.toString()=="Ace of Heart");
+    CHECK(treeOfSpade.toString()=="Three of Spade");
+}
 
+// 15.
+TEST_CASE("basic creation case of card"){
+    Card card1(Card::Value::ACE, Card::Symbol::HEART);
+    Card card2(Card::Value::FIVE, Card::Symbol::DIAMOND);
+    CHECK(card1.getValue() == Card::Value::ACE);
+    CHECK(card1.getSymbol() == Card::Symbol::HEART);
+    CHECK(card2.getValue() == Card::Value::FIVE);
+    CHECK(card2.getSymbol() == Card::Symbol::DIAMOND);
+}
+
+// 16.
+TEST_CASE("test the name of the player"){
+    
+    Player p1("name1");
+    Player p2("name2");
+    CHECK(p1.getName()=="name1");
+    CHECK(p2.getName()=="name2");
+}
+
+// 17.
+TEST_CASE("test that the name given for the player is not empty"){
+    CHECK_THROWS(Player(""));
+}
+
+// 18.
+TEST_CASE("test that the winner of the round get all the cards from the win stack"){
     Player p1("player1");
     Player p2("player2");
     Game g1(p1,p2);
-    g1.playAll();
-    CHECK(g1.getLogVector().size() == g1.getNbrTotalDraw());
+    g1.playTurn();
+    bool cond1 = p1.stacksize() == (26 + (26 - p2.stacksize())); 
+    bool cond2 = p2.stacksize() == (26 + (26 - p1.stacksize())); 
+CHECK( (cond1 || cond2) );
 }
 
+//Ressource:
+//https://stackoverflow.com/questions/5129498/how-to-cast-or-convert-an-unsigned-int-to-int-in-c
 
 #endif

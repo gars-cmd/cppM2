@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string>
 #include "card.hpp"
 
 ariel::Card::Card(Value val,Symbol sym){
@@ -21,59 +22,67 @@ ariel::Card::Symbol ariel::Card::getSymbol(){
         return symbol;
     }
 
-    void ariel::Card::printCard(){
+std::string ariel::Card::toString(){
+    std::string string = "";
         switch (value) {
             case ACE:
-                std::cout << "Ace";
+                // std::cout << "Ace";
+                string+="Ace";
                 break;
 
             case JACK:
-                std::cout << "Jack";
+                // std::cout << "Jack";
+                string+="Jack";
                 break;
 
             case QUEEN:
-                std::cout << "Queen";
+                // std::cout << "Queen";
+                string+="Queen";
                 break;
 
             case KING:
-                std::cout << "King";
+                // std::cout << "King";
+                string+="King";
                 break;
 
             case JOKER:
                 break;
 
             default:
-                std::cout << static_cast<int>(value);
+                // std::cout << static_cast<int>(value);
+                string+=static_cast<int>(value);
                 break;
         }
 
-        std::cout << " of ";
+        // std::cout << " of ";
+         string+= " of ";
 
         switch (symbol) {
             case HEART:
-                std::cout << "Heart";
+                // std::cout << "Heart";
+                string+="Heart";
                 break;
 
             case DIAMOND:
-                std::cout << "Diamond";
+                // std::cout << "Diamond";
+                string+="Diamond";
                 break;
 
             case CLUB:
-                std::cout << "Club";
+                // std::cout << "Club";
+                string+="Club";
                 break;
 
             case SPADE:
-                std::cout << "Spade";
+                // std::cout << "Spade";
+                string+="Spade";
                 break;
 
             case DEFAULT:
                 break;
         }
+    return string;
     }
 
-// int main (int argc, char *argv[])
-// {
-//     ariel::Card ace(ariel::Card::ACE, ariel::Card::HEART); 
-//     ace.printCard();
-//     return 0;
-// }
+//Ressources : 
+//https://www.youtube.com/watch?v=1nfuYMXjZsA&t=186s
