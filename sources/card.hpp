@@ -7,8 +7,7 @@ namespace ariel {
 class Card {
 public:
     enum Value {
-        ACE = 1,
-        TWO,
+        TWO = 2,
         THREE,
         FOUR,
         FIVE,
@@ -20,6 +19,7 @@ public:
         JACK,
         QUEEN,
         KING,
+        ACE,
         JOKER
     };
 

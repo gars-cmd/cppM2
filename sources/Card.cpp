@@ -2,16 +2,14 @@
 #include <string>
 #include "card.hpp"
 
-ariel::Card::Card(Value val,Symbol sym){
-        this->value = val;
-        this->symbol = sym;
-    }
 
-ariel::Card::Card(){
-    this->value = ariel::Card::Value::JOKER;
-    this->symbol = ariel::Card::Symbol::DEFAULT;
-}
+ariel::Card::Card(ariel::Card::Value val, ariel::Card::Symbol sym)
+    : value(val), symbol(sym)
+    {}
 
+ariel::Card::Card()
+    : value(ariel::Card::JOKER) , symbol(ariel::Card::DEFAULT) 
+    {}
 
 
 ariel::Card::Value ariel::Card::getValue(){
@@ -24,7 +22,7 @@ ariel::Card::Symbol ariel::Card::getSymbol(){
 
 std::string ariel::Card::toString(){
     std::string string = "";
-        switch (value) {
+        switch (this->value) {
             case ACE:
                 // std::cout << "Ace";
                 string+="Ace";
@@ -48,16 +46,41 @@ std::string ariel::Card::toString(){
             case JOKER:
                 break;
 
+            case 2:
+                string+= "two";
+                break;
+            case 3:
+                string+= "three";
+                break;
+            case 4:
+                string+= "four";
+                break;
+            case 5:
+                string+= "five";
+                break;
+            case 6:
+                string+= "six";
+                break;
+            case 7:
+                string+= "seven";
+                break;
+            case 8:
+                string+= "eight";
+                break;
+            case 9:
+                string+= "nine";
+                break;
+            case 10:
+                string+= "ten";
+                break;
             default:
-                // std::cout << static_cast<int>(value);
-                string+=static_cast<int>(value);
                 break;
         }
 
         // std::cout << " of ";
          string+= " of ";
 
-        switch (symbol) {
+        switch (this->symbol) {
             case HEART:
                 // std::cout << "Heart";
                 string+="Heart";

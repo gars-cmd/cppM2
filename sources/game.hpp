@@ -24,16 +24,22 @@ class Game {
     };
         Game(Player player1, Player player2);
         void playTurn();
+        Player getPlayer1();
+        Player getPlayer2();
         void playAll();
         void printLastTurn();
         std::vector<std::string> getLogVector();
         unsigned int getNbrTotalDraw();
-        Result compare(Card p1_card, Card p2_card);
+        Result find_winner(Card p1_card, Card p2_card);
+        void add_log( std::string previous_string, Player winner, Player looser , ariel::Card p1_card, ariel::Card p2_card);
+        void handleTeko(ariel::Card card_p1, ariel::Card card_p2);
+        void handlerWinner(Result result, ariel::Card card_p1, ariel::Card card_p2, std::string string);
         void printLog();
         void printWiner();
         void printStats();
-        std::vector<Card> generateCardStack(); //create a new card stack of 52 cards
-        void shuffleStack(std::vector<Card>& cardStack); //function that shuffle the cardStack
+        std::vector<Card*> generateCardStack(); //create a new card stack of 52 cards
+        void shuffleStack(std::vector<Card*>& cardStack); //function that shuffle the cardStack
+        void initTheWar();
 
 };
 

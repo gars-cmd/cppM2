@@ -71,13 +71,13 @@ TEST_CASE("test that at the begining the cardStack is shuffled"){
            v1.push_back(new_card);
        }
     }
-    std::cout << v1.size() << std::endl;
-    std::vector<Card> v2 = g1.generateCardStack();
-    std::cout << v2.size() << std::endl;
+    std::cout << v1.size() << '\n';
+    std::vector<Card*> v2 = g1.generateCardStack();
+    std::cout << v2.size() << '\n';
     
     bool cond = true;
     for (size_t i = 0; i < v1.size() ; i++) {
-        if (v1[i].getValue() != v2[i].getValue()) {
+        if (v1[i].getValue() != v2[i]->getValue()) {
             cond = false;
         }
     }
@@ -90,6 +90,9 @@ TEST_CASE("test that both of the player have 26 cards"){
     Player p1("player1");
     Player p2("player2");
     Game g1(p1,p2);
+    g1.initTheWar();
+    g1.getPlayer1().printAllCards();
+    g1.getPlayer2().printAllCards();
     bool s1 = p1.stacksize() == 26;
     bool s2 = p2.stacksize() == 26;
     CHECK((  s1  &&  s2 ));
@@ -112,7 +115,7 @@ TEST_CASE("test that a player play a card at a turn"){
     Player p2("player2");
     Game g1(p1,p2);
     unsigned int initSize = p1.stacksize();
-    p1.putCard(p1.getCardStack().at(1));
+    p1.putCard();
     CHECK(p1.stacksize() == initSize - 1);
 }
 
@@ -122,7 +125,7 @@ TEST_CASE("test that a player play a card at a turn"){
     Player p1("player1");
     Player p2("player2");
     Game g1(p1,p2);
-    Card compareCard = p1.putCard(p1.getCardStack().at(1));
+    Card compareCard = p1.putCard();
     bool c1 = compareCard.getValue() <= Card::KING;
     bool c2 = compareCard.getValue() >= Card::ACE;
     bool c3 = compareCard.getSymbol() >= Card::HEART;
