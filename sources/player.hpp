@@ -11,25 +11,26 @@ namespace ariel {
 class Player {
 private:
     std::string name;
-    std::vector<ariel::Card*> cardStack;
-    std::vector<ariel::Card*> wonStack;
+    std::vector<ariel::Card>* cardStack;
+    std::vector<ariel::Card>* wonStack;
     unsigned int nbrTotalCardsWon = 0;
     unsigned int nbrDrawWon = 0;
 
 public:
     Player(std::string name);
     std::string getName();
-    std::vector<ariel::Card*> getCardStack();
-    void setCardStack(std::vector<ariel::Card*> newCardStack);
+    std::vector<ariel::Card>* getCardStack();
+    void setCardStack(std::vector<ariel::Card>* newCardStack);
     unsigned int stacksize();
+    unsigned int nbrOfTurnWon();
+    void incrementNbrTurnWon();
     unsigned int cardesTaken();
-    std::vector<Card*> getWonStack();
-    unsigned int getWonStackSize();
-    void setNbrCardsWon();
-    void addToWonStack(std::vector<ariel::Card*> newcards); 
+    std::vector<Card>* getWonStack();
+    void setNbrCardsWon(unsigned int nbrOfWonCards);
+    void addToWonStack(std::vector<ariel::Card> newcards); 
     void EmptyWonStack();
     ariel::Card pickCard();
-    void pushCard(std::vector<ariel::Card*> cardsPushed);
+    void pushCard(std::vector<ariel::Card>* cardsPushed);
     ariel::Card  putCard();
     void printAllCards();
 };
