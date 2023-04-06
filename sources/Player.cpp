@@ -16,6 +16,11 @@ ariel::Player::Player(std::string name){
 
 }
 
+ariel::Player::~Player(){
+    // delete cardStack;
+    // delete wonStack;
+}
+
 std::string ariel::Player::getName(){
     return  this->name;
 }

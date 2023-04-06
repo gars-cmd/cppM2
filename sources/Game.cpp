@@ -18,25 +18,21 @@ ariel::Game::Game(Player player1, Player player2) {
     }
     this->p1 = &player1;
     this->p2 = &player2;
-    this->cardStack = new std::vector<ariel::Card>();
+    this->cardStack = new std::vector<ariel::Card>;
     this->initTheWar();
 }
 
 ariel::Game::~Game(){
-    delete this->p1;
-    delete this->p2;
-    delete this->cardStack;
-    delete this->p1->getWonStack();
-    delete this->p1->getCardStack();
-    delete this->p2->getWonStack();
-    delete this->p2->getCardStack();
+    delete cardStack;
+    // delete p1;
+    // delete p2;
 }
 
-ariel::Player ariel::Game::getPlayer1(){
+ariel::Player& ariel::Game::getPlayer1(){
     return *this->p1;
 }
 
-ariel::Player ariel::Game::getPlayer2(){
+ariel::Player& ariel::Game::getPlayer2(){
     return *this->p2;
 }
 

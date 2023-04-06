@@ -18,6 +18,7 @@ private:
 
 public:
     Player(std::string name);
+    ~Player();
     std::string getName();
     std::vector<ariel::Card>* getCardStack();
     void setCardStack(std::vector<ariel::Card>* newCardStack);

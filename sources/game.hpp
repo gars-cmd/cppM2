@@ -26,8 +26,8 @@ class Game {
         Game(Player player1, Player player2);
         ~Game();
         void playTurn();
-        Player getPlayer1();
-        Player getPlayer2();
+        Player& getPlayer1();
+        Player& getPlayer2();
         void playAll();
         void printLastTurn();
         std::vector<std::string> getLogVector();
