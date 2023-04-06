@@ -14,7 +14,6 @@ class Game {
         Player* p1;
         Player* p2;
         std::vector<std::string> logVector; // add the played log
-        std::vector<Card>* cardStack; // the cardStack
         unsigned int nbrTotalDraw = 0;
 
     public:
@@ -24,7 +23,6 @@ class Game {
         DRAW
     };
         Game(Player player1, Player player2);
-        ~Game();
         void playTurn();
         Player& getPlayer1();
         Player& getPlayer2();
@@ -39,8 +37,8 @@ class Game {
         void printLog();
         void printWiner();
         void printStats();
-        void generateCardStack(); //create a new card stack of 52 cards
-        void shuffleStack(); //function that shuffle the cardStack
+        std::vector<Card*> generateCardStack(); //create a new card stack of 52 cards
+        void shuffleStack(std::vector<Card*>& cardStack); //function that shuffle the cardStack
         void initTheWar();
 
 };
