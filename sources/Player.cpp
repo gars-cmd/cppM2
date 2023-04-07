@@ -12,13 +12,11 @@ ariel::Player::Player(std::string name){
     }
     this->name = name;
     this->cardStack = new std::vector<ariel::Card>;
-    // this->wonStack = new std::vector<ariel::Card>;
 
 }
 
 ariel::Player::~Player(){
     // delete cardStack;
-    // delete wonStack;
 }
 
 std::string ariel::Player::getName(){

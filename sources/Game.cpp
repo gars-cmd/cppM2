@@ -23,7 +23,7 @@ ariel::Game::Game(Player player1, Player player2) {
 }
 
 ariel::Game::~Game(){
-    delete cardStack;
+    // delete cardStack;
     // delete p1;
     // delete p2;
 }
@@ -46,20 +46,21 @@ void ariel::Game::add_log(std::string previous_string ,Player winner, Player loo
 /*
  * the string is used to store the previous logs in case of teko
  * the function is called only when a winner is obtained
+ * in special case when the last turn there is a teko the result var is Draw
+ * in this last case the card are divided between the palyer 
  * the function call the add_log fun
 */
 void ariel::Game::handlerWinner(Result result, ariel::Card card_p1, ariel::Card card_p2, std::string string){
-    // std::vector<Card> won_cards {card_p1,card_p2};
     if (result == P1_WIN) {
         this->add_log(string,  *this->p1, *this->p2, card_p1, card_p2);
         this->p1->incNbrTurnWon();
-        // this->p1->addToWonStack(won_cards);
         this->p1->incNbrCardsWonBy(2);
-    }else{
+    }else if (result == P2_WIN){
         this->add_log(string,  *this->p2, *this->p1, card_p2, card_p1);
         this->p2->incNbrTurnWon();
-        // this->p2->addToWonStack(won_cards);
         this->p2->incNbrCardsWonBy(2);
+    }else {
+        std::cout << "critical teko , the cards are divided between " << this->p1->getName() << " and " << this->p2->getName() << '\n';
     }
 
 }
@@ -78,9 +79,8 @@ void ariel::Game::putHiddenCards(){
 /*
 * while the result of a new draw is not a winner make a new draw and add it to the log_string
 * when a winner is found we call the function handle winner
-* we add the won cards to the wonstack of each players
-* we add the number of cards won by the winner to the number of cards won
-* at each turn we add to the tekostack the new cards drawn
+* we sum all the cards win by the winner (except for the last turn) and increment the won cards he have.
+* in special case when a teko cannot be done completely we send the cards accumulated to the handleInvalidTeko func
 */
 void ariel::Game::handleTeko(ariel::Card card_p1, ariel::Card card_p2){
     //init all the value needed
@@ -93,7 +93,10 @@ void ariel::Game::handleTeko(ariel::Card card_p1, ariel::Card card_p2){
     //while the draw do not end with a winner
     while (teko) {
         new_log +=  this->p1->getName() + " played " +new_p1_card.toString() + " " + this->p2->getName() +  " played " + new_p2_card.toString() + "." + " Draw. ";
-        bool validity = this.checkValidityOfTeko(cardAccumulated);
+        if (!checkValidityOfTeko()) {
+            this->handleInvalidTeko(cardAccumulated);
+            break;
+        }
         this->putHiddenCards();
         cardAccumulated+=2;
         new_p1_card = this->p1->putCard(); new_p2_card = this->p2->putCard();
@@ -151,8 +154,18 @@ bool ariel::Game::checkValidityOfTeko(){
     return validity;
 }
 
+/*
+ * The function check if there is an even number of cards accumulated (normal case),
+ * if there is not throw an error else divide the cards by two and give them to the players
+ */
 void ariel::Game::handleInvalidTeko(unsigned int cardAccumulatedUntil){
-    
+    if (cardAccumulatedUntil % 2 != 0) { 
+        throw std::invalid_argument("the number of card card accumulated need to be even "); 
+    }
+    else {
+        this->p1->incNbrCardsWonBy(cardAccumulatedUntil / 2);
+        this->p2->incNbrCardsWonBy(cardAccumulatedUntil / 2);
+    }
 }
 
 std::vector<std::string> ariel::Game::getLogVector(){
@@ -168,8 +181,8 @@ void ariel::Game::printLog(){
 void ariel::Game::printStats(){
 
     ariel::Game::printWiner();
-    std::cout << '\t' << this->p1->getName() << " won " << this->p1->cardesTaken() << "cards" << '\n'; 
-    std::cout << '\t' << this->p2->getName() << " won " << this->p2->cardesTaken() << "cards" << '\n'; 
+    std::cout << '\t' << this->p1->getName() << " won " << this->p1->cardesTaken() << " cards" << '\n'; 
+    std::cout << '\t' << this->p2->getName() << " won " << this->p2->cardesTaken() << " cards" << '\n'; 
     std::cout << '\t' << this->p1->getName() << " won " << this->p1->nbrOfTurnWon() << " turns , over " << this->nbrTotalDraw << " turns " << '\n'; 
     std::cout << '\t' << this->p1->getName() << " have a winrate of " << (static_cast<double>(this->p1->nbrOfTurnWon()) / this->nbrTotalDraw )*100 << "%" << '\n'; 
     std::cout << '\t' << this->p2->getName() << " won " << this->p2->nbrOfTurnWon() << " turns , over " << this->nbrTotalDraw << " turns " << '\n'; 
