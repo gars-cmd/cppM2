@@ -12,21 +12,66 @@
 
 using std::vector;
 
-ariel::Game::Game(Player player1, Player player2) {
-    if (player1.getName() == player2.getName()) {
-        throw std::invalid_argument("both player have the same name");
-    }
+ariel::Game::Game(Player& player1, Player& player2) {
     this->p1 = &player1;
     this->p2 = &player2;
-    this->cardStack = new std::vector<ariel::Card>;
     this->initTheWar();
 }
 
 ariel::Game::~Game(){
-    // delete cardStack;
-    // delete p1;
-    // delete p2;
 }
+
+// copy constructor
+ariel::Game::Game(const Game& other) {
+    this->p1 = new Player(*other.p1);
+    this->p2 = new Player(*other.p2);
+    this->logVector = other.logVector;
+}
+
+//copy assignement operator
+ariel::Game& ariel::Game::operator=(const Game& other)
+{
+    if (this != &other) {
+        delete this->p1;
+        delete this->p2;
+        this->p1 = nullptr;
+        this->p2 = nullptr;
+
+        this->p1 = other.p1;
+        this->p2 = other.p2;
+    }
+    return *this;
+}
+
+//move constructor
+ariel::Game::Game(ariel::Game&& other) noexcept{
+    p1 = other.p1;
+    p2 = other.p2;
+    other.p1 = nullptr;
+    other.p2 = nullptr;
+    logVector = std::move(other.logVector);
+    cardStack = std::move(other.cardStack);
+    nbrTotalDraw = other.nbrTotalDraw;
+}
+
+//move assignement operator
+ariel::Game& ariel::Game::operator=(ariel::Game&& other) noexcept{
+    if (this != &other) {
+        delete p1;
+        delete p2;
+
+        p1 = other.p1;
+        p2 = other.p2;
+        other.p1 = nullptr;
+        other.p2 = nullptr;
+        logVector = std::move(other.logVector);
+        cardStack = std::move(other.cardStack);
+        nbrTotalDraw = other.nbrTotalDraw;
+        other.nbrTotalDraw = 0;
+    }
+    return *this;
+}
+
 
 ariel::Player& ariel::Game::getPlayer1(){
     return *this->p1;
@@ -51,16 +96,21 @@ void ariel::Game::add_log(std::string previous_string ,Player winner, Player loo
  * the function call the add_log fun
 */
 void ariel::Game::handlerWinner(Result result, ariel::Card card_p1, ariel::Card card_p2, std::string string){
+
     if (result == P1_WIN) {
         this->add_log(string,  *this->p1, *this->p2, card_p1, card_p2);
         this->p1->incNbrTurnWon();
         this->p1->incNbrCardsWonBy(2);
+        this->p1->addToWonStack({card_p1,card_p2});
     }else if (result == P2_WIN){
         this->add_log(string,  *this->p2, *this->p1, card_p2, card_p1);
         this->p2->incNbrTurnWon();
         this->p2->incNbrCardsWonBy(2);
+        this->p2->addToWonStack({card_p1,card_p2});
     }else {
         std::cout << "critical teko , the cards are divided between " << this->p1->getName() << " and " << this->p2->getName() << '\n';
+        this->p1->addToWonStack({card_p1});
+        this->p2->addToWonStack({card_p2});
     }
 
 }
@@ -70,9 +120,8 @@ void ariel::Game::handlerWinner(Result result, ariel::Card card_p1, ariel::Card 
  * this function is used to realized the put of the two hidden cards on teko
  * in the function each one of the player use the putCard function to drop them
  */
-void ariel::Game::putHiddenCards(){
-    this->p1->putCard();
-    this->p2->putCard();
+std::vector<ariel::Card> ariel::Game::putHiddenCards(){
+    return {this->p1->putCard(), this->p2->putCard()};
 }
 
 
@@ -85,10 +134,11 @@ void ariel::Game::putHiddenCards(){
 void ariel::Game::handleTeko(ariel::Card card_p1, ariel::Card card_p2){
     //init all the value needed
     bool teko = true;
-    unsigned int cardAccumulated = 2; 
+    int cardAccumulated = 2; 
     Card new_p1_card = card_p1; Card new_p2_card = card_p2;
     std::string new_log = "";
     Result winner = find_winner(new_p1_card, new_p2_card);
+    std::vector<Card>tekoStack;
 
     //while the draw do not end with a winner
     while (teko) {
@@ -97,7 +147,8 @@ void ariel::Game::handleTeko(ariel::Card card_p1, ariel::Card card_p2){
             this->handleInvalidTeko(cardAccumulated);
             break;
         }
-        this->putHiddenCards();
+        std::vector<Card> tmp_teko = this->putHiddenCards();
+        tekoStack.insert(tekoStack.end(),tmp_teko.begin(),tmp_teko.end());
         cardAccumulated+=2;
         new_p1_card = this->p1->putCard(); new_p2_card = this->p2->putCard();
         winner = find_winner(new_p1_card, new_p2_card);
@@ -107,8 +158,10 @@ void ariel::Game::handleTeko(ariel::Card card_p1, ariel::Card card_p2){
             teko = false;
             if (winner == P1_WIN) {
                 this->p1->incNbrCardsWonBy(cardAccumulated);
+                this->p1->addToWonStack(tekoStack);
             }else {
                 this->p2->incNbrCardsWonBy(cardAccumulated);
+                this->p2->addToWonStack(tekoStack);
             }
          }
         else {
@@ -120,6 +173,10 @@ void ariel::Game::handleTeko(ariel::Card card_p1, ariel::Card card_p2){
 
 
 void ariel::Game::playTurn(){
+        if (this->p1->getName() == this->p2->getName()) {
+        throw std::invalid_argument("both player have the same name");
+    }
+
     if (this->p1->stacksize() < 1 || this->p2->stacksize() < 1) {
         throw::std::length_error("there is no more cards to play with");
     }
@@ -140,10 +197,9 @@ void ariel::Game::playTurn(){
 }
 
 void ariel::Game::playAll(){
-    while (this->p1->getCardStack()->size() > 0) {
+    while (this->p1->getCardStack().size() > 0) {
         this->playTurn();
     }
-    std::cout << "end of game :" << '\n' ; 
 }
 
 bool ariel::Game::checkValidityOfTeko(){
@@ -158,7 +214,7 @@ bool ariel::Game::checkValidityOfTeko(){
  * The function check if there is an even number of cards accumulated (normal case),
  * if there is not throw an error else divide the cards by two and give them to the players
  */
-void ariel::Game::handleInvalidTeko(unsigned int cardAccumulatedUntil){
+void ariel::Game::handleInvalidTeko(int cardAccumulatedUntil){
     if (cardAccumulatedUntil % 2 != 0) { 
         throw std::invalid_argument("the number of card card accumulated need to be even "); 
     }
@@ -189,7 +245,7 @@ void ariel::Game::printStats(){
     std::cout << '\t' << this->p2->getName() << " have a winrate of " << (static_cast<double>(this->p2->nbrOfTurnWon()) / this->nbrTotalDraw )*100 << "%" << '\n'; 
 }
 
-unsigned int ariel::Game::getNbrTotalDraw(){
+int ariel::Game::getNbrTotalDraw(){
     return this->nbrTotalDraw;
 }
 
@@ -211,7 +267,7 @@ void ariel::Game::printLastTurn(){
 void ariel::Game::shuffleStack(){
     std::random_device rd;
     auto rng = std::default_random_engine {rd()};
-    std::shuffle(this->cardStack->begin(),this->cardStack->end(), rng);
+    std::shuffle(this->cardStack.begin(),this->cardStack.end(), rng);
 }
 
 ariel::Game::Result ariel::Game::find_winner(Card p1_card, Card p2_card){
@@ -229,12 +285,13 @@ ariel::Game::Result ariel::Game::find_winner(Card p1_card, Card p2_card){
 }
 
 
+
 void ariel::Game::generateCardStack(){
     for (int i = ariel::Card::HEART ; i <= ariel::Card::CLUB; i++) {
         for (int j = ariel::Card::TWO ; j <= ariel::Card::ACE ; j++) {
             Card new_card = Card(static_cast<ariel::Card::Value>(j) , static_cast<ariel::Card::Symbol>(i));
             // std::cout << "card : " << new_card.getValue() << " of " << new_card.getSymbol() <<  '\n';
-            this->cardStack->push_back(new_card);
+            this->cardStack.push_back(new_card);
         }
     }
 }
@@ -247,18 +304,19 @@ void ariel::Game::initTheWar(){
     this->shuffleStack();
 
     // Divide the CardStack into two part for each one of the player
-    vector<ariel::Card>* v_p1 = new std::vector<ariel::Card>(this->cardStack->begin(), this->cardStack->begin() + this->cardStack->size() / 2);
-    vector<ariel::Card>* v_p2 = new std::vector<ariel::Card>(this->cardStack->begin() + this->cardStack->size() / 2, this->cardStack->end());
+    vector<ariel::Card> v_p1 (this->cardStack.begin(), this->cardStack.begin() + this->cardStack.size() / 2);
+    vector<ariel::Card> v_p2 (this->cardStack.begin() + this->cardStack.size() / 2, this->cardStack.end());
+
 
     // give both of the part to each player
     this->p1->setCardStack(v_p1);
-    // std::cout << "p1 have " << this->p1->getCardStack()->size() << '\n';
-    // this->p1->printAllCards();
+    std::cout << "p1 have " << this->p1->getCardStack().size() << '\n';
     this->p2->setCardStack(v_p2);
-    // std::cout << "p2 have " << this->p2->getCardStack()->size() << '\n';
-    // this->p2->printAllCards();
-    delete v_p1;
-    delete v_p2;
+    std::cout << "p2 have " << this->p2->getCardStack().size() << '\n';
+    std::cout << "p1 have after game init : " << this->p1->stacksize() << "cards" << '\n';
+    std::cout << "p2 have after game init : " << this->p2->stacksize() << "cards" << '\n';
+    // delete v_p1;
+    // delete v_p2;
 }
 
 
@@ -269,4 +327,5 @@ void ariel::Game::initTheWar(){
 // https://www.tutorialkart.com/cpp/cpp-split-vector-into-two-halves/ 
 // https://www.geeksforgeeks.org/passing-vector-constructor-c/
 // https://www.freecodecamp.org/news/cpp-vector-how-to-initialize-a-vector-in-a-constructor/
-
+// https://stackoverflow.com/questions/2551775/appending-a-vector-to-a-vector
+// https://www.geeksforgeeks.org/ways-copy-vector-c/

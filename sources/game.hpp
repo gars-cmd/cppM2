@@ -14,8 +14,8 @@ class Game {
         Player* p1;
         Player* p2;
         std::vector<std::string> logVector; // add the played log
-        std::vector<Card>* cardStack; // the cardStack
-        unsigned int nbrTotalDraw = 0;
+        std::vector<Card> cardStack; // the cardStack
+        int nbrTotalDraw = 0;
 
     public:
     enum Result {
@@ -23,15 +23,19 @@ class Game {
         P2_WIN,
         DRAW
     };
-        Game(Player player1, Player player2);
+        Game(Player& player1, Player& player2);
         ~Game();
+        Game(const Game& other) ;
+        Game& operator=(const Game& other);
+        Game(ariel::Game&& other)noexcept;
+        Game& operator=(Game&& other)noexcept;
         void playTurn();
         Player& getPlayer1();
         Player& getPlayer2();
         void playAll();
         void printLastTurn();
         std::vector<std::string> getLogVector();
-        unsigned int getNbrTotalDraw();
+        int getNbrTotalDraw();
         Result find_winner(Card p1_card, Card p2_card);
         void add_log( std::string previous_string, Player winner, Player looser , ariel::Card p1_card, ariel::Card p2_card);
         void handleTeko(ariel::Card card_p1, ariel::Card card_p2);
@@ -39,10 +43,10 @@ class Game {
         void printLog();
         void printWiner();
         bool checkValidityOfTeko();
-        void handleInvalidTeko(unsigned int cardAccumulatedUntil);
+        void handleInvalidTeko(int cardAccumulatedUntil);
         void printStats();
         void generateCardStack(); //create a new card stack of 52 cards
-        void putHiddenCards();
+        std::vector<Card> putHiddenCards();
         void shuffleStack(); //function that shuffle the cardStack
         void initTheWar();
 

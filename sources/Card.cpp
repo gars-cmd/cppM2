@@ -47,31 +47,31 @@ std::string ariel::Card::toString(){
                 break;
 
             case 2:
-                string+= "two";
+                string+= "Two";
                 break;
             case 3:
-                string+= "three";
+                string+= "Three";
                 break;
             case 4:
-                string+= "four";
+                string+= "Four";
                 break;
             case 5:
-                string+= "five";
+                string+= "Five";
                 break;
             case 6:
-                string+= "six";
+                string+= "Six";
                 break;
             case 7:
-                string+= "seven";
+                string+= "Seven";
                 break;
             case 8:
-                string+= "eight";
+                string+= "Eight";
                 break;
             case 9:
-                string+= "nine";
+                string+= "Nine";
                 break;
             case 10:
-                string+= "ten";
+                string+= "Ten";
                 break;
             default:
                 break;
