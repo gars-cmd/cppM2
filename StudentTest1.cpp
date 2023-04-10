@@ -1,5 +1,4 @@
 #include "doctest.h"
-
 #include <stdexcept>
 #include "sources/player.hpp"
 #include "sources/game.hpp"
@@ -98,4 +97,3 @@ TEST_CASE("The game ends after at most 26 turns")
     CHECK(p1.stacksize() == 0);
     CHECK(p2.stacksize() == 0);
 }
-

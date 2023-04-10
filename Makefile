@@ -1,6 +1,6 @@
 #!make -f
 
-CXX=clang++-15
+CXX=clang++-14
 CXXVERSION=c++2a
 SOURCE_PATH=sources
 OBJECT_PATH=objects
@@ -33,4 +33,4 @@ $(OBJECT_PATH)/%.o: $(SOURCE_PATH)/%.cpp $(HEADERS)
 	$(CXX) $(CXXFLAGS) --compile $< -o $@
 
 clean:
-	rm -f $(OBJECTS) *.o test* demo*rm -f $(OBJECTS) *.o test* demo*rm -f 
+	rm -f $(OBJECTS) *.o test* demo*

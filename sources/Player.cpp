@@ -27,7 +27,7 @@ ariel::Player::Player(const Player& other) {
 ariel::Player::~Player(){
 }
 
-//copy copy_assignment operator
+//copy_assignment operator
 ariel::Player& ariel::Player::operator=(const ariel::Player& other){
     if (this != &other) {
         this->name = other.name;
@@ -46,6 +46,7 @@ ariel::Player::Player(Player&& other) noexcept{
         this->nbrTotalCardsWon = other.nbrTotalCardsWon;
 }
 
+//move  assignment operator
 ariel::Player& ariel::Player::operator=(ariel::Player&& other) noexcept{
     if (this == &other) {
         return *this;
@@ -95,7 +96,6 @@ void ariel::Player::setCardStack(std::vector<ariel::Card>& newCardStack){
     this->cardStack.clear();
     for (ariel::Card& card : newCardStack) {
         this->cardStack.push_back(card);
-        std::cout << "the card is :" << card.toString() << '\n';
     }
 }
 

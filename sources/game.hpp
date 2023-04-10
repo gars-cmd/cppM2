@@ -15,6 +15,7 @@ class Game {
         Player* p2;
         std::vector<std::string> logVector; // add the played log
         std::vector<Card> cardStack; // the cardStack
+        int nbrTotalTurn = 0;
         int nbrTotalDraw = 0;
 
     public:
@@ -33,9 +34,11 @@ class Game {
         Player& getPlayer1();
         Player& getPlayer2();
         void playAll();
-        void printLastTurn();
+        void printLastTurn()const;
         std::vector<std::string> getLogVector();
+        int getNbrTotalTurn();
         int getNbrTotalDraw();
+        void incNbrDraw();
         Result find_winner(Card p1_card, Card p2_card);
         void add_log( std::string previous_string, Player winner, Player looser , ariel::Card p1_card, ariel::Card p2_card);
         void handleTeko(ariel::Card card_p1, ariel::Card card_p2);

@@ -12,6 +12,7 @@
 
 using std::vector;
 
+// regular constructor
 ariel::Game::Game(Player& player1, Player& player2) {
     this->p1 = &player1;
     this->p2 = &player2;
@@ -51,6 +52,7 @@ ariel::Game::Game(ariel::Game&& other) noexcept{
     other.p2 = nullptr;
     logVector = std::move(other.logVector);
     cardStack = std::move(other.cardStack);
+    nbrTotalTurn = other.nbrTotalTurn;
     nbrTotalDraw = other.nbrTotalDraw;
 }
 
@@ -66,7 +68,9 @@ ariel::Game& ariel::Game::operator=(ariel::Game&& other) noexcept{
         other.p2 = nullptr;
         logVector = std::move(other.logVector);
         cardStack = std::move(other.cardStack);
+        nbrTotalTurn = other.nbrTotalTurn;
         nbrTotalDraw = other.nbrTotalDraw;
+        other.nbrTotalTurn = 0;
         other.nbrTotalDraw = 0;
     }
     return *this;
@@ -84,7 +88,8 @@ ariel::Player& ariel::Game::getPlayer2(){
 
 // create the regular pattern from log
 void ariel::Game::add_log(std::string previous_string ,Player winner, Player looser, ariel::Card p1_card, ariel::Card p2_card){
-    std::string new_log = previous_string  + winner.getName() + " played " + p1_card.toString() + " " + looser.getName() +  " played " + p2_card.toString() + ". " + winner.getName() + " wins." + '\n';
+    std::string turnNbr = " ." + std::to_string(this->getNbrTotalTurn()+1) + " ";
+    std::string new_log = turnNbr + previous_string  + winner.getName() + " played " + p1_card.toString() + " " + looser.getName() +  " played " + p2_card.toString() + ". " + winner.getName() + " wins." + '\n';
     this->logVector.push_back(new_log);
 }
 
@@ -142,6 +147,7 @@ void ariel::Game::handleTeko(ariel::Card card_p1, ariel::Card card_p2){
 
     //while the draw do not end with a winner
     while (teko) {
+        incNbrDraw();
         new_log +=  this->p1->getName() + " played " +new_p1_card.toString() + " " + this->p2->getName() +  " played " + new_p2_card.toString() + "." + " Draw. ";
         if (!checkValidityOfTeko()) {
             this->handleInvalidTeko(cardAccumulated);
@@ -192,7 +198,7 @@ void ariel::Game::playTurn(){
     }else {
         handlerWinner(winner_result, c_p1, c_p2, "");
     }
-    this->nbrTotalDraw += 1; //increment the counter of turn in the game
+    this->nbrTotalTurn += 1; //increment the counter of turn in the game
     }
 }
 
@@ -236,40 +242,65 @@ void ariel::Game::printLog(){
 
 void ariel::Game::printStats(){
 
-    ariel::Game::printWiner();
-    std::cout << '\t' << this->p1->getName() << " won " << this->p1->cardesTaken() << " cards" << '\n'; 
-    std::cout << '\t' << this->p2->getName() << " won " << this->p2->cardesTaken() << " cards" << '\n'; 
-    std::cout << '\t' << this->p1->getName() << " won " << this->p1->nbrOfTurnWon() << " turns , over " << this->nbrTotalDraw << " turns " << '\n'; 
-    std::cout << '\t' << this->p1->getName() << " have a winrate of " << (static_cast<double>(this->p1->nbrOfTurnWon()) / this->nbrTotalDraw )*100 << "%" << '\n'; 
-    std::cout << '\t' << this->p2->getName() << " won " << this->p2->nbrOfTurnWon() << " turns , over " << this->nbrTotalDraw << " turns " << '\n'; 
-    std::cout << '\t' << this->p2->getName() << " have a winrate of " << (static_cast<double>(this->p2->nbrOfTurnWon()) / this->nbrTotalDraw )*100 << "%" << '\n'; 
+    std::cout << "the winner of the game is : ";ariel::Game::printWiner();
+    std::cout << '\t' << this->p1->getName() << " won " << this->p1->cardesTaken() << " cards." << '\n'; 
+    std::cout << '\t' << this->p2->getName() << " won " << this->p2->cardesTaken() << " cards." << '\n'; 
+    std::cout << '\t' << this->p1->getName() << " won " << this->p1->nbrOfTurnWon() << " turns , over " << this->nbrTotalTurn << " turns " << '\n'; 
+    std::cout << '\t' <<"In the game there were " << this->getNbrTotalDraw() << " Draw." << '\n';
+    std::cout << '\t' <<"The drawrate of the game is " << (static_cast<double>(this->getNbrTotalDraw()) / this->getNbrTotalTurn() *100) << "%."<< '\n';
+    std::cout << '\t' << this->p1->getName() << " have a winrate of " << (static_cast<double>(this->p1->nbrOfTurnWon()) / this->nbrTotalTurn )*100 << "%." << '\n'; 
+    std::cout << '\t' << this->p2->getName() << " won " << this->p2->nbrOfTurnWon() << " turns , over " << this->nbrTotalTurn << " turns." << '\n'; 
+    std::cout << '\t' << this->p2->getName() << " have a winrate of " << (static_cast<double>(this->p2->nbrOfTurnWon()) / this->nbrTotalTurn )*100 << "%." << '\n'; 
 }
 
+// return the number of turn during the game
+int ariel::Game::getNbrTotalTurn(){
+    return this->nbrTotalTurn;
+}
+
+//return the number of Draw during the game
 int ariel::Game::getNbrTotalDraw(){
     return this->nbrTotalDraw;
 }
 
+// Increase by one the counter of number of Draw during the game
+void ariel::Game::incNbrDraw(){
+    this->nbrTotalDraw += 1;
+}
+
 /*
 * show the name of the winner according to number of cards in wonstack
-* In case of teko -> need to implement
-* use of ternary operator.
+* In case of teko -> print a message
 */
 void ariel::Game::printWiner(){
-    ( this->p1->cardesTaken() > this->p2->cardesTaken() )? 
-        std::cout << this->p1->getName() << '\n' 
-        : std::cout << this->p2->getName() << '\n';
+    if (this->p1->cardesTaken() > this->p2->cardesTaken()) {
+        std::cout << this->p1->getName() << '\n';
+    }else if (this->p2->cardesTaken() > this->p1->cardesTaken() ) {
+        std::cout << this->p2->getName() << '\n';
+    }else {
+        std::cout << "there is no winner , there is an equality" << '\n';
+    }
 }
 
-void ariel::Game::printLastTurn(){
-    std::cout << this->logVector.back() << '\n';
+// print the last log register in the log vector 
+void ariel::Game::printLastTurn() const{
+    if (!this->logVector.empty()) {
+        std::cout << logVector.back() << '\n';
+    }
 }
 
+// shuffle the card stack before sharing the cards between the player
 void ariel::Game::shuffleStack(){
     std::random_device rd;
     auto rng = std::default_random_engine {rd()};
     std::shuffle(this->cardStack.begin(),this->cardStack.end(), rng);
 }
 
+/*
+* given two cards (from player1 and player2 ) 
+* return which cards win the turn , in case of Draw , return Draw 
+* the return value is an enum of type Result
+*/
 ariel::Game::Result ariel::Game::find_winner(Card p1_card, Card p2_card){
     if (p1_card.getValue() == ariel::Card::Value::ACE && p2_card.getValue() == ariel::Card::Value::TWO) {
         return P2_WIN;
@@ -285,38 +316,33 @@ ariel::Game::Result ariel::Game::find_winner(Card p1_card, Card p2_card){
 }
 
 
-
+// create a cardStack of 52 cards
 void ariel::Game::generateCardStack(){
     for (int i = ariel::Card::HEART ; i <= ariel::Card::CLUB; i++) {
         for (int j = ariel::Card::TWO ; j <= ariel::Card::ACE ; j++) {
             Card new_card = Card(static_cast<ariel::Card::Value>(j) , static_cast<ariel::Card::Symbol>(i));
-            // std::cout << "card : " << new_card.getValue() << " of " << new_card.getSymbol() <<  '\n';
             this->cardStack.push_back(new_card);
         }
     }
 }
 
+/*
+* Create a card stack 
+* shuffle it 
+* give the first part to player1 , the second to player2
+*/
 void ariel::Game::initTheWar(){
 
-    // create the CardStack and shuffle it 
     this->generateCardStack();
-    // std::cout << "in the stackCard there is : " << this->cardStack->size() << '\n';
     this->shuffleStack();
 
     // Divide the CardStack into two part for each one of the player
     vector<ariel::Card> v_p1 (this->cardStack.begin(), this->cardStack.begin() + this->cardStack.size() / 2);
     vector<ariel::Card> v_p2 (this->cardStack.begin() + this->cardStack.size() / 2, this->cardStack.end());
 
-
     // give both of the part to each player
     this->p1->setCardStack(v_p1);
-    std::cout << "p1 have " << this->p1->getCardStack().size() << '\n';
     this->p2->setCardStack(v_p2);
-    std::cout << "p2 have " << this->p2->getCardStack().size() << '\n';
-    std::cout << "p1 have after game init : " << this->p1->stacksize() << "cards" << '\n';
-    std::cout << "p2 have after game init : " << this->p2->stacksize() << "cards" << '\n';
-    // delete v_p1;
-    // delete v_p2;
 }
 
 
